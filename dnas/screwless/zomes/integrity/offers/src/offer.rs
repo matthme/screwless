@@ -36,7 +36,6 @@ pub fn validate_create_link_offer_updates(
     target_address: AnyLinkableHash,
     _tag: LinkTag,
 ) -> ExternResult<ValidateCallbackResult> {
-    // Check the entry type for the given action hash
     let action_hash = ActionHash::from(base_address);
     let record = must_get_valid_record(action_hash)?;
     let _offer: crate::Offer = record
@@ -48,6 +47,38 @@ pub fn validate_create_link_offer_updates(
                 WasmErrorInner::Guest(String::from("Linked action must reference an entry"))
             ),
         )?;
+    let action_hash = ActionHash::from(target_address);
+    let record = must_get_valid_record(action_hash)?;
+    let _offer: crate::Offer = record
+        .entry()
+        .to_app_option()
+        .map_err(|e| wasm_error!(e))?
+        .ok_or(
+            wasm_error!(
+                WasmErrorInner::Guest(String::from("Linked action must reference an entry"))
+            ),
+        )?;
+    Ok(ValidateCallbackResult::Valid)
+}
+pub fn validate_delete_link_offer_updates(
+    _action: DeleteLink,
+    _original_action: CreateLink,
+    _base: AnyLinkableHash,
+    _target: AnyLinkableHash,
+    _tag: LinkTag,
+) -> ExternResult<ValidateCallbackResult> {
+    Ok(
+        ValidateCallbackResult::Invalid(
+            String::from("OfferUpdates links cannot be deleted"),
+        ),
+    )
+}
+pub fn validate_create_link_all_offers(
+    _action: CreateLink,
+    _base_address: AnyLinkableHash,
+    target_address: AnyLinkableHash,
+    _tag: LinkTag,
+) -> ExternResult<ValidateCallbackResult> {
     // Check the entry type for the given action hash
     let action_hash = ActionHash::from(target_address);
     let record = must_get_valid_record(action_hash)?;
@@ -63,7 +94,7 @@ pub fn validate_create_link_offer_updates(
     // TODO: add the appropriate validation rules
     Ok(ValidateCallbackResult::Valid)
 }
-pub fn validate_delete_link_offer_updates(
+pub fn validate_delete_link_all_offers(
     _action: DeleteLink,
     _original_action: CreateLink,
     _base: AnyLinkableHash,
@@ -72,7 +103,7 @@ pub fn validate_delete_link_offer_updates(
 ) -> ExternResult<ValidateCallbackResult> {
     Ok(
         ValidateCallbackResult::Invalid(
-            String::from("OfferUpdates links cannot be deleted"),
+            String::from("AllOffers links cannot be deleted"),
         ),
     )
 }

@@ -9,6 +9,8 @@ pub fn create_offer(offer: Offer) -> ExternResult<Record> {
                 WasmErrorInner::Guest(String::from("Could not find the newly created Offer"))
             ),
         )?;
+    let path = Path::from("all_offers");
+    create_link(path.path_entry_hash()?, offer_hash.clone(), LinkTypes::AllOffers, ())?;
     Ok(record)
 }
 #[hdk_extern]

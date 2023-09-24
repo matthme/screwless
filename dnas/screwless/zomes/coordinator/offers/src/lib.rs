@@ -1,3 +1,4 @@
+pub mod all_offers;
 pub mod offer;
 use hdk::prelude::*;
 use offers_integrity::*;

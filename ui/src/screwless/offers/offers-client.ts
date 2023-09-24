@@ -39,6 +39,12 @@ export class OffersClient extends ZomeClient<OffersSignal> {
     });
     return new EntryRecord(record);
   }
-  
+
+  /** All Offers */
+
+  async getAllOffers(): Promise<Array<EntryRecord<Offer>>> {
+    const records: Record[] = await this.callZome('get_all_offers', null);
+    return records.map(r => new EntryRecord(r));
+  }
 
 }

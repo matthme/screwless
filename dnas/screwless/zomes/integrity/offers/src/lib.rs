@@ -12,6 +12,7 @@ pub enum EntryTypes {
 #[hdk_link_types]
 pub enum LinkTypes {
     OfferUpdates,
+    AllOffers,
 }
 #[hdk_extern]
 pub fn genesis_self_check(
@@ -111,6 +112,14 @@ pub fn validate(op: Op) -> ExternResult<ValidateCallbackResult> {
                         tag,
                     )
                 }
+                LinkTypes::AllOffers => {
+                    validate_create_link_all_offers(
+                        action,
+                        base_address,
+                        target_address,
+                        tag,
+                    )
+                }
             }
         }
         FlatOp::RegisterDeleteLink {
@@ -124,6 +133,15 @@ pub fn validate(op: Op) -> ExternResult<ValidateCallbackResult> {
             match link_type {
                 LinkTypes::OfferUpdates => {
                     validate_delete_link_offer_updates(
+                        action,
+                        original_action,
+                        base_address,
+                        target_address,
+                        tag,
+                    )
+                }
+                LinkTypes::AllOffers => {
+                    validate_delete_link_all_offers(
                         action,
                         original_action,
                         base_address,
@@ -276,6 +294,14 @@ pub fn validate(op: Op) -> ExternResult<ValidateCallbackResult> {
                                 tag,
                             )
                         }
+                        LinkTypes::AllOffers => {
+                            validate_create_link_all_offers(
+                                action,
+                                base_address,
+                                target_address,
+                                tag,
+                            )
+                        }
                     }
                 }
                 OpRecord::DeleteLink { original_action_hash, base_address, action } => {
@@ -303,6 +329,15 @@ pub fn validate(op: Op) -> ExternResult<ValidateCallbackResult> {
                     match link_type {
                         LinkTypes::OfferUpdates => {
                             validate_delete_link_offer_updates(
+                                action,
+                                create_link.clone(),
+                                base_address,
+                                create_link.target_address,
+                                create_link.tag,
+                            )
+                        }
+                        LinkTypes::AllOffers => {
+                            validate_delete_link_all_offers(
                                 action,
                                 create_link.clone(),
                                 base_address,

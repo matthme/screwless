@@ -14,7 +14,11 @@ export class OffersStore {
   offers = new LazyHoloHashMap((offerHash: ActionHash) =>
     lazyLoadAndPoll(async () => this.client.getOffer(offerHash), 4000)
   );
-
-
   
+  /** All Offers */
+
+  allOffers = lazyLoadAndPoll(async () => {
+    const records = await this.client.getAllOffers();
+    return records.map(r => r.actionHash);
+  }, 4000);
 }
