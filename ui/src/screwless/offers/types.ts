@@ -35,4 +35,22 @@ export type OffersSignal = {
   link_type: string;
 };
 
-export type EntryTypes = {};
+export type EntryTypes =
+ | ({  type: 'Offer'; } & Offer);
+
+
+
+export interface Offer { 
+  amount: number;
+
+  offered_currency: string;
+
+  requested_currency: string;
+
+  available_from: number;
+
+  available_until: number;
+
+  airport: string;
+}
+
