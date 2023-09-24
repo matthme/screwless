@@ -1,3 +1,7 @@
+import { offersStoreContext } from './screwless/offers/context.js';
+import { OffersClient } from './screwless/offers/offers-client.js';
+import { OffersStore } from './screwless/offers/offers-store.js';
+
 
 // Replace 'ligth.css' with 'dark.css' if you want the dark theme
 import '@shoelace-style/shoelace/dist/themes/light.css';
@@ -28,6 +32,10 @@ type View = { view: 'main' };
 @localized()
 @customElement('holochain-app')
 export class HolochainApp extends LitElement {
+  @provide({ context: offersStoreContext })
+  @property()
+  _offersStore!: OffersStore;
+
 @state() _loading = true;
 
   @state() _view = { view: 'main' };
@@ -52,6 +60,7 @@ export class HolochainApp extends LitElement {
     // Don't change this
     this._profilesStore = new ProfilesStore(new ProfilesClient(appAgentClient, 'screwless'));
     this._myProfile = new StoreSubscriber(this, () => this._profilesStore.myProfile);
+    this._offersStore = new OffersStore(new OffersClient(appAgentClient, 'screwless'));
 }
 
   renderMyProfile() {
@@ -133,6 +142,5 @@ export class HolochainApp extends LitElement {
       }
     `,
     sharedStyles,
-  ];
-}
+  ];}
 

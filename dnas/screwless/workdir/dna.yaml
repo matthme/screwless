@@ -10,6 +10,10 @@ integrity:
       hash: ~
       bundled: "../../../target/wasm32-unknown-unknown/release/profiles_integrity.wasm"
       dependencies: ~
+    - name: offers_integrity
+      hash: ~
+      bundled: "../../../target/wasm32-unknown-unknown/release/offers_integrity.wasm"
+      dependencies: ~
 coordinator:
   zomes:
     - name: profiles
@@ -17,3 +21,8 @@ coordinator:
       bundled: "../../../target/wasm32-unknown-unknown/release/profiles.wasm"
       dependencies:
         - name: profiles_integrity
+    - name: offers
+      hash: ~
+      bundled: "../../../target/wasm32-unknown-unknown/release/offers.wasm"
+      dependencies:
+        - name: offers_integrity

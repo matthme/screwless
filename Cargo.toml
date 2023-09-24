@@ -14,6 +14,12 @@ hdk = "=0.1.4"
 holochain = "0.1.6"
 serde = "=1.0.166"
 
+[workspace.dependencies.offers]
+path = "dnas/screwless/zomes/coordinator/offers"
+
+[workspace.dependencies.offers_integrity]
+path = "dnas/screwless/zomes/integrity/offers"
+
 [workspace.dependencies.profiles]
 path = "dnas/screwless/zomes/coordinator/profiles"
 
