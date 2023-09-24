@@ -8,27 +8,21 @@ import {
 } from '@holochain-open-dev/elements';
 import '@holochain-open-dev/elements/dist/elements/display-error.js';
 import { EntryRecord } from '@holochain-open-dev/utils';
-import {
-  ActionHash,
-  AgentPubKey,
-  DnaHash,
-  EntryHash,
-  Record,
-} from '@holochain/client';
 import { consume } from '@lit-labs/context';
 import { localized, msg } from '@lit/localize';
 import { mdiAlertCircleOutline, mdiDelete } from '@mdi/js';
 import SlAlert from '@shoelace-style/shoelace/dist/components/alert/alert.js';
 import '@shoelace-style/shoelace/dist/components/alert/alert.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
-import '@shoelace-style/shoelace/dist/components/option/option.js';
-import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
-import '@shoelace-style/shoelace/dist/components/select/select.js';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
 import '@shoelace-style/shoelace/dist/components/input/input.js';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
 import '@shoelace-style/shoelace/dist/components/range/range.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
+import SlSelect from '@shoelace-style/shoelace/dist/components/select/select.js';
 import { LitElement, html } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -37,8 +31,22 @@ import { offersStoreContext } from '../context.js';
 import { OffersStore } from '../offers-store.js';
 import { Offer } from '../types.js';
 
-export const CURRENCY_LIST = ["EUR", "USD", "YEN", "CHF", "HOT", "HoloFuel"];
-export const AIRPORT_LIST = ["AMS", "LAX", "LHR", "ZRH"];
+export const CURRENCY_LIST = [
+  'EUR',
+  'GBP',
+  'USD',
+  'YEN',
+  'CHF',
+  'HOT',
+  'HoloFuel',
+];
+export const AIRPORT_LIST = ['AMS', 'LAX', 'LHR', 'ZRH'];
+export const DEFAULT_CURRENCIES: Record<string, string> = {
+  AMS: 'EUR',
+  LAX: 'USD',
+  LHR: 'GBP',
+  ZRH: 'CHF',
+};
 
 /**
  * @element create-offer
@@ -59,6 +67,9 @@ export class CreateOffer extends LitElement {
   @state()
   committing = false;
 
+  @state()
+  defaultCurrency: string | undefined;
+
   /**
    * @internal
    */
@@ -75,7 +86,7 @@ export class CreateOffer extends LitElement {
       airport: fields.airport,
     };
 
-    console.log("Offer to be created: ", offer);
+    console.log('Offer to be created: ', offer);
 
     try {
       this.committing = true;
@@ -110,13 +121,26 @@ export class CreateOffer extends LitElement {
         ${onSubmit(fields => this.createOffer(fields))}
       >
         <div style="margin-bottom: 16px;">
-          <sl-input
-            name="amount"
-            .label=${msg('Amount')}
-            type="number"
-            placeholder="Amount"
+          <sl-select
+            id="airport-input-field"
+            name="airport"
+            .label=${msg('Airport')}
             required
-          ></sl-input>
+            @sl-change=${() => {
+              const selectedAirport: string = (
+                this.shadowRoot!.getElementById(
+                  'airport-input-field'
+                )! as SlSelect
+              ).value as string;
+              this.defaultCurrency = DEFAULT_CURRENCIES[selectedAirport];
+            }}
+          >
+            ${AIRPORT_LIST.map(
+              airport => html`
+                <sl-option value="${airport}">${airport}</sl-option>
+              `
+            )}
+          </sl-select>
         </div>
 
         <div style="margin-bottom: 16px;">
@@ -124,27 +148,38 @@ export class CreateOffer extends LitElement {
             name="offered_currency"
             .label=${msg('Offered Currency')}
             required
+            value=${this.defaultCurrency ? this.defaultCurrency : undefined}
           >
-            ${
-              CURRENCY_LIST.map((currency) => html`
-              <sl-option value="${currency}">${currency}</sl-option>
-              `)
-            }
+            ${CURRENCY_LIST.map(
+              currency => html`
+                <sl-option value="${currency}">${currency}</sl-option>
+              `
+            )}
           </sl-select>
         </div>
 
         <div style="margin-bottom: 16px;">
           <sl-select
-          name="requested_currency"
-          .label=${msg('Requested Currency')}
+            name="requested_currency"
+            .label=${msg('Requested Currency')}
             required
           >
-            ${
-              CURRENCY_LIST.map((currency) => html`
-              <sl-option value="${currency}">${currency}</sl-option>
-              `)
-            }
+            ${CURRENCY_LIST.map(
+              currency => html`
+                <sl-option value="${currency}">${currency}</sl-option>
+              `
+            )}
           </sl-select>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <sl-input
+            name="amount"
+            .label=${msg('Amount')}
+            type="number"
+            placeholder="Amount"
+            required
+          ></sl-input>
         </div>
 
         <div style="margin-bottom: 16px;">
@@ -165,20 +200,6 @@ export class CreateOffer extends LitElement {
             @click=${(e: Event) => e.preventDefault()}
             required
           ></sl-input>
-        </div>
-
-        <div style="margin-bottom: 16px;">
-          <sl-select
-            name="airport"
-            .label=${msg('Airport')}
-            required
-          >
-            ${
-              AIRPORT_LIST.map((airport) => html`
-              <sl-option value="${airport}">${airport}</sl-option>
-              `)
-            }
-          </sl-select>
         </div>
 
         <sl-button variant="primary" type="submit" .loading=${this.committing}

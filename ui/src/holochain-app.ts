@@ -101,7 +101,7 @@ export class HolochainApp extends LitElement {
   // TODO: add here the content of your application
   renderContent() {
     return html`
-      <create-offer></create-offer>
+      <!-- <create-offer></create-offer> -->
       <all-offers></all-offers>
     `;
   }
