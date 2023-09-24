@@ -1,46 +1,48 @@
 import {
-  DnaHash,
-  Record, 
-  ActionHash, 
-  SignedActionHashed,
-  EntryHash, 
+  ActionHash,
   AgentPubKey,
   Create,
-  Update,
-  Delete,
   CreateLink,
-  DeleteLink
+  Delete,
+  DeleteLink,
+  DnaHash,
+  EntryHash,
+  Record,
+  SignedActionHashed,
+  Update,
 } from '@holochain/client';
 
-export type OffersSignal = {
-  type: 'EntryCreated';
-  action: SignedActionHashed<Create>;
-  app_entry: EntryTypes;
-} | {
-  type: 'EntryUpdated';
-  action: SignedActionHashed<Update>;
-  app_entry: EntryTypes;
-  original_app_entry: EntryTypes;
-} | {
-  type: 'EntryDeleted';
-  action: SignedActionHashed<Delete>;
-  original_app_entry: EntryTypes;
-} | {
-  type: 'LinkCreated';
-  action: SignedActionHashed<CreateLink>;
-  link_type: string;
-} | {
-  type: 'LinkDeleted';
-  action: SignedActionHashed<DeleteLink>;
-  link_type: string;
-};
+export type OffersSignal =
+  | {
+      type: 'EntryCreated';
+      action: SignedActionHashed<Create>;
+      app_entry: EntryTypes;
+    }
+  | {
+      type: 'EntryUpdated';
+      action: SignedActionHashed<Update>;
+      app_entry: EntryTypes;
+      original_app_entry: EntryTypes;
+    }
+  | {
+      type: 'EntryDeleted';
+      action: SignedActionHashed<Delete>;
+      original_app_entry: EntryTypes;
+    }
+  | {
+      type: 'LinkCreated';
+      action: SignedActionHashed<CreateLink>;
+      link_type: string;
+    }
+  | {
+      type: 'LinkDeleted';
+      action: SignedActionHashed<DeleteLink>;
+      link_type: string;
+    };
 
-export type EntryTypes =
- | ({  type: 'Offer'; } & Offer);
+export type EntryTypes = { type: 'Offer' } & Offer;
 
-
-
-export interface Offer { 
+export interface Offer {
   amount: number;
 
   offered_currency: string;
@@ -53,4 +55,3 @@ export interface Offer {
 
   airport: string;
 }
-
