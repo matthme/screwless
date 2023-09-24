@@ -2,4 +2,18 @@
 manifest_version: "1"
 name: screwless
 description: ~
-roles: []
+roles:
+  - name: screwless
+    provisioning:
+      strategy: create
+      deferred: false
+    dna:
+      bundled: "../dnas/screwless/workdir/screwless.dna"
+      modifiers:
+        network_seed: ~
+        properties: ~
+        origin_time: ~
+        quantum_time: ~
+      installed_hash: ~
+      _version: ~
+      clone_limit: 0

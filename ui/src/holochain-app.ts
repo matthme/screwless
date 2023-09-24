@@ -1,3 +1,4 @@
+
 // Replace 'ligth.css' with 'dark.css' if you want the dark theme
 import '@shoelace-style/shoelace/dist/themes/light.css';
 
@@ -27,7 +28,7 @@ type View = { view: 'main' };
 @localized()
 @customElement('holochain-app')
 export class HolochainApp extends LitElement {
-  @state() _loading = true;
+@state() _loading = true;
 
   @state() _view = { view: 'main' };
 
@@ -48,8 +49,10 @@ export class HolochainApp extends LitElement {
   }
 
   async initStores(appAgentClient: AppAgentClient) {
-    // Don't change this  
-  }
+    // Don't change this
+    this._profilesStore = new ProfilesStore(new ProfilesClient(appAgentClient, 'screwless'));
+    this._myProfile = new StoreSubscriber(this, () => this._profilesStore.myProfile);
+}
 
   renderMyProfile() {
     switch (this._myProfile.value.status) {
@@ -132,3 +135,4 @@ export class HolochainApp extends LitElement {
     sharedStyles,
   ];
 }
+
