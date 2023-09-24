@@ -11,6 +11,8 @@ pub fn create_offer(offer: Offer) -> ExternResult<Record> {
         )?;
     let path = Path::from("all_offers");
     create_link(path.path_entry_hash()?, offer_hash.clone(), LinkTypes::AllOffers, ())?;
+    let offered_currency_path = Path::from(format!("{}.{}.{}", offer.airport, offer.offered_currency, offer.requested_currency)).typed(LinkTypes::AllOffers)?;
+    create_link(offered_currency_path.path_entry_hash()?, offer_hash.clone(), LinkTypes::AllOffers, ())?;
     Ok(record)
 }
 #[hdk_extern]
