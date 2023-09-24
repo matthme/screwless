@@ -21,6 +21,9 @@ import { mdiAlertCircleOutline, mdiDelete } from '@mdi/js';
 import SlAlert from '@shoelace-style/shoelace/dist/components/alert/alert.js';
 import '@shoelace-style/shoelace/dist/components/alert/alert.js';
 import '@shoelace-style/shoelace/dist/components/button/button.js';
+import '@shoelace-style/shoelace/dist/components/option/option.js';
+import '@shoelace-style/shoelace/dist/components/menu-item/menu-item.js';
+import '@shoelace-style/shoelace/dist/components/select/select.js';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/icon-button/icon-button.js';
 import '@shoelace-style/shoelace/dist/components/icon/icon.js';
@@ -33,6 +36,9 @@ import { repeat } from 'lit/directives/repeat.js';
 import { offersStoreContext } from '../context.js';
 import { OffersStore } from '../offers-store.js';
 import { Offer } from '../types.js';
+
+export const CURRENCY_LIST = ["EUR", "USD", "YEN", "CHF", "HOT", "HoloFuel"];
+export const AIRPORT_LIST = ["AMS", "LAX", "LHR", "ZRH"];
 
 /**
  * @element create-offer
@@ -114,19 +120,31 @@ export class CreateOffer extends LitElement {
         </div>
 
         <div style="margin-bottom: 16px;">
-          <sl-input
+          <sl-select
             name="offered_currency"
             .label=${msg('Offered Currency')}
             required
-          ></sl-input>
+          >
+            ${
+              CURRENCY_LIST.map((currency) => html`
+              <sl-option value="${currency}">${currency}</sl-option>
+              `)
+            }
+          </sl-select>
         </div>
 
         <div style="margin-bottom: 16px;">
-          <sl-input
-            name="requested_currency"
-            .label=${msg('Requested Currency')}
+          <sl-select
+          name="requested_currency"
+          .label=${msg('Requested Currency')}
             required
-          ></sl-input>
+          >
+            ${
+              CURRENCY_LIST.map((currency) => html`
+              <sl-option value="${currency}">${currency}</sl-option>
+              `)
+            }
+          </sl-select>
         </div>
 
         <div style="margin-bottom: 16px;">
@@ -150,7 +168,17 @@ export class CreateOffer extends LitElement {
         </div>
 
         <div style="margin-bottom: 16px;">
-          <sl-input name="airport" .label=${msg('Airport')} required></sl-input>
+          <sl-select
+            name="airport"
+            .label=${msg('Airport')}
+            required
+          >
+            ${
+              AIRPORT_LIST.map((airport) => html`
+              <sl-option value="${airport}">${airport}</sl-option>
+              `)
+            }
+          </sl-select>
         </div>
 
         <sl-button variant="primary" type="submit" .loading=${this.committing}
