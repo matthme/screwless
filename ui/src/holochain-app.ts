@@ -29,8 +29,13 @@ import './screwless/offers/elements/all-offers.js';
 import './screwless/offers/elements/create-offer.js';
 import { OffersClient } from './screwless/offers/offers-client.js';
 import { OffersStore } from './screwless/offers/offers-store.js';
+import { SlSelect } from '@shoelace-style/shoelace';
+import { AIRPORT_LIST } from './screwless/offers/elements/create-offer.js';
 
-type View = { view: 'main' };
+type View =
+  | { view: 'main' }
+  | { view: 'create-offer' }
+  | { view: 'offer-detail' };
 
 @localized()
 @customElement('holochain-app')
@@ -42,6 +47,9 @@ export class HolochainApp extends LitElement {
   @state() _loading = true;
 
   @state() _view = { view: 'main' };
+
+  @state()
+  selectedAirport: string | undefined;
 
   @provide({ context: profilesStoreContext })
   @property()
@@ -100,10 +108,57 @@ export class HolochainApp extends LitElement {
 
   // TODO: add here the content of your application
   renderContent() {
-    return html`
-      <!-- <create-offer></create-offer> -->
-      <all-offers></all-offers>
-    `;
+    switch (this._view.view) {
+      case 'main':
+        return html`
+          <div class="column center-content" style="flex: 1;">
+            <sl-select
+              id="airport-input-field"
+              name="airport"
+              .label=${msg('Airport')}
+              required
+              @sl-change=${() => {
+                const selectedAirport: string = (
+                  this.shadowRoot!.getElementById(
+                    'airport-input-field'
+                  )! as SlSelect
+                ).value as string;
+                this.selectedAirport = selectedAirport;
+              }}
+            >
+              ${AIRPORT_LIST.map(
+                airport => html`
+                  <sl-option value="${airport}">${airport}</sl-option>
+                `
+              )}
+            </sl-select>
+            <all-offers
+              .airport=${this.selectedAirport}
+              style="display: flex; flex: 1;"
+              @offer-selected=${() => {this._view = { view: 'offer-detail' }}}
+            ></all-offers>
+          </div>
+          <sl-button
+            variant="success"
+            style="position: fixed; bottom: 10px; right: 10px;"
+            @click=${() => {this._view = { view: 'create-offer'}} }
+          >Create Offer</sl-button>
+        `;
+      case 'create-offer':
+        return html`
+          <div class="column center-content" style="flex: 1;">
+            <create-offer></create-offer>
+          </div>
+        `
+      case 'offer-detail':
+        return html`
+          <div class="column center-content" style="flex: 1;">
+            Contact Person
+          </div>
+        `
+      default:
+        return html`hello`;
+    }
   }
 
   renderBackButton() {

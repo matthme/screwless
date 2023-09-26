@@ -30,6 +30,9 @@ export class AllOffers extends LitElement {
   @consume({ context: offersStoreContext, subscribe: true })
   offersStore!: OffersStore;
 
+  @property()
+  airport: string | undefined;
+
   /**
    * @internal
    */
@@ -46,12 +49,13 @@ export class AllOffers extends LitElement {
       </div>`;
 
     return html`
-      <div style="display: flex; flex-direction: column; flex: 1">
+      <div style="display: flex; flex-direction: column; flex: 1;">
         ${hashes.map(
           hash =>
             html`<offer-summary
+              .airport=${this.airport}
               .offerHash=${hash}
-              style="margin-bottom: 16px;"
+              style="margin-bottom: 16px; display: flex; flex: 1;"
             ></offer-summary>`
         )}
       </div>

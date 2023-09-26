@@ -8,7 +8,7 @@ import { localized, msg } from '@lit/localize';
 import '@shoelace-style/shoelace/dist/components/card/card.js';
 import '@shoelace-style/shoelace/dist/components/format-date/format-date.js';
 import '@shoelace-style/shoelace/dist/components/spinner/spinner.js';
-import { LitElement, html } from 'lit';
+import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import { offersStoreContext } from '../context';
@@ -32,6 +32,9 @@ export class OfferSummary extends LitElement {
   @consume({ context: offersStoreContext, subscribe: true })
   offersStore!: OffersStore;
 
+  @property()
+  airport: string | undefined;
+
   /**
    * @internal
    */
@@ -41,61 +44,59 @@ export class OfferSummary extends LitElement {
 
   renderSummary(entryRecord: EntryRecord<Offer>) {
     return html`
-      <div style="display: flex; flex-direction: column">
-        <div style="display: flex; flex-direction: column; margin-bottom: 16px">
-          <span style="margin-bottom: 8px"
-            ><strong>${msg('Amount')}</strong></span
-          >
-          <span style="white-space: pre-line">${entryRecord.entry.amount}</span>
+      <div style="display: flex; flex-direction: column; flex: 1;">
+      <div class="row" style="display: flex; flex: 1; justify-content: space-between;">
+          <div style="display: flex; flex: 1; flex-direction: column; margin-bottom: 16px">
+            <span style="margin-bottom: 8px"
+              ><strong>${msg('Offered')}</strong></span
+            >
+            <div class="row">
+              <span style="white-space: pre-line; margin-right: 5px;">${entryRecord.entry.amount}</span>
+              <span style="white-space: pre-line"
+                >${entryRecord.entry.offered_currency}</span
+              >
+            </div>
+          </div>
+
+
+          <div style="display: flex; flex: 1; flex-direction: column; margin-bottom: 16px; margin-left: 30px;">
+            <span style="margin-bottom: 8px"
+              ><strong>${msg('Requested')}</strong></span
+            >
+            <div class="row">
+              <span style="white-space: pre-line; margin-right: 5px;">???</span>
+              <span style="white-space: pre-line"
+              >${entryRecord.entry.requested_currency}</span
+              >
+            </div>
+          </div>
         </div>
 
-        <div style="display: flex; flex-direction: column; margin-bottom: 16px">
-          <span style="margin-bottom: 8px"
-            ><strong>${msg('Offered Currency')}</strong></span
-          >
-          <span style="white-space: pre-line"
-            >${entryRecord.entry.offered_currency}</span
-          >
-        </div>
 
-        <div style="display: flex; flex-direction: column; margin-bottom: 16px">
-          <span style="margin-bottom: 8px"
-            ><strong>${msg('Requested Currency')}</strong></span
-          >
-          <span style="white-space: pre-line"
-            >${entryRecord.entry.requested_currency}</span
-          >
-        </div>
+        <div class="row" style="display: flex; flex: 1; justify-content: space-between;">
+          <div style="display: flex; flex: 1; flex-direction: column; margin-bottom: 16px">
+            <span
+              ><strong>${msg('from:')}</strong></span
+            >
+            <span
+              ><sl-format-date
+                month="long" day="numeric" year="numeric" hour="numeric" minute="numeric"
+                .date=${new Date(entryRecord.entry.available_from / 1000)}
+              ></sl-format-date
+            ></span>
+          </div>
 
-        <div style="display: flex; flex-direction: column; margin-bottom: 16px">
-          <span style="margin-bottom: 8px"
-            ><strong>${msg('Available From')}</strong></span
-          >
-          <span style="white-space: pre-line"
-            ><sl-format-date
-              .date=${new Date(entryRecord.entry.available_from / 1000)}
-            ></sl-format-date
-          ></span>
-        </div>
-
-        <div style="display: flex; flex-direction: column; margin-bottom: 16px">
-          <span style="margin-bottom: 8px"
-            ><strong>${msg('Available Until')}</strong></span
-          >
-          <span style="white-space: pre-line"
-            ><sl-format-date
-              .date=${new Date(entryRecord.entry.available_until / 1000)}
-            ></sl-format-date
-          ></span>
-        </div>
-
-        <div style="display: flex; flex-direction: column; margin-bottom: 16px">
-          <span style="margin-bottom: 8px"
-            ><strong>${msg('Airport')}</strong></span
-          >
-          <span style="white-space: pre-line"
-            >${entryRecord.entry.airport}</span
-          >
+          <div style="display: flex; flex-direction: column; margin-bottom: 16px; margin-left: 30px;">
+            <span
+              ><strong>${msg('until:')}</strong></span
+            >
+            <span
+              ><sl-format-date
+                month="long" day="numeric" year="numeric" hour="numeric" minute="numeric"
+                .date=${new Date(entryRecord.entry.available_until / 1000)}
+              ></sl-format-date
+            ></span>
+          </div>
         </div>
       </div>
     `;
@@ -124,7 +125,7 @@ export class OfferSummary extends LitElement {
 
   render() {
     return html`<sl-card
-      style="flex: 1; cursor: grab;"
+      class="offer-card"
       @click=${() =>
         this.dispatchEvent(
           new CustomEvent('offer-selected', {
@@ -140,5 +141,16 @@ export class OfferSummary extends LitElement {
     </sl-card>`;
   }
 
-  static styles = [sharedStyles];
+  static styles = [sharedStyles,
+  css`
+    .offer-card {
+      display: flex;
+      flex: 1;
+      cursor: pointer;
+      margin-bottom: 10px;
+      max-width: 1000px;
+      height: 200px;
+    }
+
+  `];
 }
